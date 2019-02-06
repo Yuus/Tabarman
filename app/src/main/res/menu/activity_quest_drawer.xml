@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_rules"
+            android:icon="@drawable/ic_rules"
+            android:title="Правила игры" />
+        <item
+            android:id="@+id/nav_bestgamers"
+            android:icon="@drawable/ic_bestgamers"
+            android:title="Лучшие ироки" />
+        <item
+            android:id="@+id/nav_news"
+            android:icon="@drawable/ic_news"
+            android:title="Новости" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="Настройки" />
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_menu_share"
+            android:title="Поделиться" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_about"
+            android:title="О приложении" />
+
+    </group>
+
+    <item android:title="T-MEDIA GROUP Подпишись">
+        <menu>
+            <item
+                android:id="@+id/nav_http"
+                android:icon="@drawable/ic_http"
+                android:title="t-media.kg" />
+            <item
+                android:id="@+id/nav_facebook"
+                android:icon="@drawable/ic_facebook"
+                android:title="Facebook" />
+            <!--<item-->
+                <!--android:id="@+id/nav_twitter"-->
+                <!--android:icon="@drawable/ic_twitter"-->
+                <!--android:title="Twitter" />-->
+            <item
+                android:id="@+id/nav_youtube"
+                android:icon="@drawable/ic_youtube"
+                android:title="Youtube" />
+
+        </menu>
+    </item>
+
+</menu>
