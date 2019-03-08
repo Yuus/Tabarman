@@ -1,27 +1,27 @@
 package kg.t_media.tabarman.utilites;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
 
 public class QuestResult {
 
     @SerializedName("status")
     @Expose
-    private Integer status;
+    private String status;
     @SerializedName("message")
     @Expose
     private String message;
-    @SerializedName("data")
+    @SerializedName("questData")
     @Expose
-    private ArrayList<Data> data = new ArrayList<>();
+    private ArrayList<DataQ> dataq = new ArrayList<>();
 
-    public Integer getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -33,30 +33,37 @@ public class QuestResult {
         this.message = message;
     }
 
-    public ArrayList<Data> getData() {
-        return data;
+    public ArrayList<DataQ> getDataq() {
+        return dataq;
     }
 
-    public void setData(ArrayList<Data> data) {
-        this.data = data;
+    public void setDataq(ArrayList<DataQ> dataq) {
+        this.dataq = dataq;
     }
 
-    public class Data {
+
+    public class DataQ {
+
         @SerializedName("questId")
         @Expose
         private String questId;
+
         @SerializedName("questName")
         @Expose
         private String questName;
+
         @SerializedName("questCategoryId")
         @Expose
         private String questCategoryId;
+
         @SerializedName("startDateTime")
         @Expose
-        private String startDateTime;
+        private Integer startDateTime;
+
         @SerializedName("endDateTime")
         @Expose
-        private String endDateTime;
+        private Integer endDateTime;
+
         @SerializedName("countryId")
         @Expose
         private String countryId;
@@ -77,29 +84,17 @@ public class QuestResult {
             this.questName = questName;
         }
 
-        public String getQuestCategoryId() {
-            return questCategoryId;
-        }
+        public String getQuestCategoryId() { return questCategoryId; }
 
-        public void setQuestCategoryId(String questCategoryId) {
-            this.questCategoryId = questCategoryId;
-        }
+        public void setQuestCategoryId(String questCategoryId) { this.questCategoryId = questCategoryId; }
 
-        public String getStartDateTime() {
-            return startDateTime;
-        }
+        public Integer getStartDateTime() { return startDateTime; }
 
-        public void setStartDateTime(String startDateTime) {
-            this.startDateTime = startDateTime;
-        }
+        public void setStartDateTime(Integer startDateTime) { this.startDateTime = startDateTime; }
 
-        public String getEndDateTime() {
-            return endDateTime;
-        }
+        public Integer getEndDateTime() { return endDateTime; }
 
-        public void setEndDateTime(String endDateTime) {
-            this.endDateTime = endDateTime;
-        }
+        public void setEndDateTime(Integer endDateTime) { this.endDateTime = endDateTime; }
 
         public String getCountryId() {
             return countryId;
@@ -108,6 +103,7 @@ public class QuestResult {
         public void setCountryId(String countryId) {
             this.countryId = countryId;
         }
+
     }
 
 }

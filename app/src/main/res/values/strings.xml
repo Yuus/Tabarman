@@ -31,4 +31,10 @@
     <string name="settings">Настройки</string>
     <string name="exit">Выход</string>
     <string name="site_menu_delete_all">Удалить все</string>
+
+    <string name="quiz_promt_third_text">Пройти тест снова?</string>
+    <string name="quiz_promt_first_text">Предыдущий результат: %s из %s</string>
+    <string name="title_activity_test">test</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
 </resources>

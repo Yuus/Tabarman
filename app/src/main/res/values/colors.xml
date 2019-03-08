@@ -3,6 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary21">#c4c6c7</color>
+    <color name="colorAccent21">#f26144</color>
 
 
     <!--Common colors-->
@@ -26,4 +28,6 @@
     <color name="dark_blue">#1A237E</color>
     <color name="light_green">#69F0AE</color>
     <color name="light_gray">#E0E0E0</color>
+
+    <color name="notification_card_bg">#EFEFEF</color>
 </resources>

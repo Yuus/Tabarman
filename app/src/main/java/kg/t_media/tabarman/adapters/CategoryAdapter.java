@@ -51,47 +51,47 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         final CategoryModel model = categoryList.get(position);
 
         String categoryName = model.getCategoryName();
+
         holder.tvCategoryTitle.setText(Html.fromHtml(categoryName));
         holder.tvCategoryId.setText(String.valueOf(position + 1));
-
-//        switch (position) {
-//            case 0:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_yellow));
-//                break;
-//            case 1:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_green));
-//                break;
-//            case 2:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_blue));
-//                break;
-//            case 3:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_orange));
-//                break;
-//            case 4:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_red));
-//                break;
-//            case 5:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_purple));
-//                break;
-//            case 6:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_yellow));
-//                break;
-//            case 7:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_green));
-//                break;
-//            case 8:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_blue));
-//                break;
-//            case 9:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_orange));
-//                break;
-//            case 10:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_red));
-//                break;
-//            case 11:
-//                holder.lytContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rectangle_purple));
-//                break;
-//        }
+        switch (position) {
+            case 0:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_yellow);
+                break;
+            case 1:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_green);
+                break;
+            case 2:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_blue);
+                break;
+            case 3:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_orange);
+                break;
+            case 4:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_red);
+                break;
+            case 5:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_purple);
+                break;
+            case 6:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_yellow);
+                break;
+            case 7:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_green);
+                break;
+            case 8:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_blue);
+                break;
+            case 9:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_orange);
+                break;
+            case 10:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_red);
+                break;
+            case 11:
+                holder.lytContainer.setBackgroundResource(R.drawable.rectangle_purple);
+                break;
+        }
 
     }
 

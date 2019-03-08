@@ -27,6 +27,10 @@ import kg.t_media.tabarman.listeners.ListItemClickListener;
 import kg.t_media.tabarman.models.CategoryModel;
 import kg.t_media.tabarman.utilites.ActivityUtilities;
 import kg.t_media.tabarman.utilites.Apputilities;
+import kg.t_media.tabarman.utilites.Datum;
+import kg.t_media.tabarman.utilites.LoginResult;
+import kg.t_media.tabarman.utilites.PlayerSettingsResult;
+import kg.t_media.tabarman.utilites.QResult;
 import kg.t_media.tabarman.utilites.QuestResult;
 import kg.t_media.tabarman.utilites.TabarmanApi;
 import kg.t_media.tabarman.utilites.TabarmanClient;
@@ -40,6 +44,7 @@ import android.widget.TextView;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Quest extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -66,7 +71,8 @@ public class Quest extends BaseActivity
     String email;
 
     private ArrayList<CategoryModel> categoryList;
-    private CategoryAdapter adapter = null;
+//    private CategoryAdapter adapter = null;
+    CategoryAdapter adapter = null;
     private RecyclerView recyclerView;
 
 
@@ -77,24 +83,57 @@ public class Quest extends BaseActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        recyclerView = (RecyclerView) findViewById(R.id.rvContent);
-//        recyclerView.setLayoutManager(new GridLayoutManager(activity, 2, RecyclerView.VERTICAL, false));
-//        adapter = new CategoryAdapter(context, activity, categoryList);
-//        recyclerView.setAdapter(adapter);
+        recyclerView = (RecyclerView) findViewById(R.id.rvContent);
+        recyclerView.setLayoutManager(new GridLayoutManager(activity, 2, RecyclerView.VERTICAL, false));
 
         categoryList = new ArrayList<>();
+
+        adapter = new CategoryAdapter(context, activity, categoryList);
+        recyclerView.setAdapter(adapter);
 
         activity = Quest.this;
         context = getApplicationContext();
 
- //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                TabarmanApi api = TabarmanClient.getTabarmanApi();
+                final Call<QuestResult> questResult = api.questList(playerId, sessionId, 0);
+                questResult.enqueue(new Callback<QuestResult>() {
+                    @Override
+                    public void onResponse(Call<QuestResult> call, Response<QuestResult> response) {
+                        if (response.isSuccessful()) {
+
+                            String status = response.body().getStatus();
+                            String message = response.body().getMessage();
+                            List<QuestResult.DataQ> questData = response.body().getDataq();
+
+                            QuestResult.DataQ quest;
+                            String categoryId;
+                            String categoryName;
+                            for (int i = 0; i < questData.size(); i++) {
+                                quest = questData.get(i);
+                                categoryId = quest.getQuestId();
+                                categoryName = quest.getQuestName();
+                               // if ( quest.getCountryId() == countryId) {
+                                    categoryList.add(new CategoryModel(categoryId, categoryName));
+                               // }
+                            }
+                        } else {
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<QuestResult> call, Throwable t) {
+                    }
+                });
+
+                adapter.notifyDataSetChanged();
+
+
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -112,8 +151,19 @@ public class Quest extends BaseActivity
         navHeadName.setText(fullName);
 
         getPrefs();
-//        initLoader();
         loadQuests();
+
+        initListener();
+
+
+
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 
@@ -127,93 +177,66 @@ public class Quest extends BaseActivity
         }
     }
 
-//    private void parseJson(String jsonData) {
-//
-//                String categoryId = object.getString(AppConstants.JSON_KEY_CATEGORY_ID);
-//                String categoryName = object.getString(AppConstants.JSON_KEY_CATEGORY_NAME);
-//
-//                categoryList.add(new CategoryModel(categoryId, categoryName));
-//
-//        hideLoader();
-//        adapter.notifyDataSetChanged();
-//    }
+    private void initListener() {
 
-//    private void initListener() {
-//
-//        // recycler list item click listener
-//        adapter.setItemClickListener(new ListItemClickListener() {
-//            @Override
-//            public void onItemClick(int position, View view) {
-//
-//                CategoryModel model = categoryList.get(position);
-//                ActivityUtilities.getInstance().invokeCommonQuizActivity(activity, QuizPromptActivity.class, model.getCategoryId(), true);
-//            }
-//        });
-//    }
+        // recycler list item click listener
+        adapter.setItemClickListener(new ListItemClickListener() {
+            @Override
+            public void onItemClick(int position, View view) {
+
+                CategoryModel model = categoryList.get(position);
+                ActivityUtilities.getInstance().invokeCommonQuizActivity(activity, QuizPromptActivity.class, model.getCategoryId(), true);
+            }
+        });
+    }
 
     private void loadQuests() {
+
         TabarmanApi api = TabarmanClient.getTabarmanApi();
-        Call<QuestResult> questResult = api.questList(playerId, sessionId, 0);
+        final Call<QuestResult> questResult = api.questList(playerId, sessionId, 0);
 
-        try {
-            questResult.enqueue(new Callback<QuestResult>() {
-                @Override
-                public void onResponse(Call<QuestResult> call, Response<QuestResult> response) {
-                    if (response.isSuccessful()) {
-                        Integer status = response.body().getStatus();
-                        String message = response.body().getMessage();
-                        ArrayList<QuestResult.Data> questData = response.body().getData();
+        questResult.enqueue(new Callback<QuestResult>() {
+            @Override
+            public void onResponse(Call<QuestResult> call, Response<QuestResult> response) {
+                if (response.isSuccessful()) {
 
-                        QuestResult.Data quest;
-                        for (int i = 0; i < questData.size(); i++) {
-                            quest = questData.get(i);
-                            String categoryId = quest.getQuestId();
-                            String categoryName = quest.getQuestName();
+                    String status = response.body().getStatus();
+                    String message = response.body().getMessage();
+                    List<QuestResult.DataQ> questData = response.body().getDataq();
 
+                    QuestResult.DataQ quest;
+                    String categoryId;
+                    String categoryName;
+                    for (int i = 0; i < questData.size(); i++) {
+                        quest = questData.get(i);
+                        categoryId = quest.getQuestId();
+                        categoryName = quest.getQuestName();
+                        if ( quest.getCountryId() == countryId) {
                             categoryList.add(new CategoryModel(categoryId, categoryName));
                         }
-
-//                    hideLoader();
-//                        adapter.notifyDataSetChanged();
                     }
+
+
+                } else {
+
                 }
+            }
+            @Override
+            public void onFailure(Call<QuestResult> call, Throwable t) {
 
-                @Override
-                public void onFailure(Call<QuestResult> call, Throwable t) {
+            }
+        });
 
-                }
-            });
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
+//        if (categoryList.isEmpty()) {
+//            loadQuests();
+//        }
+        adapter.notifyDataSetChanged();
+//        if (categoryList.size() == 0 ) {
+//            ActivityUtilities.getInstance().invokeNewActivity(Quest.this, Login.class, true );
+//        }
 
     }
 
-//    Меню справа сверху
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.quest, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -223,7 +246,6 @@ public class Quest extends BaseActivity
 
         if (id == R.id.nav_http) {
             Apputilities.httpLink(activity);
-
         } else if (id == R.id.nav_facebook) {
             Apputilities.facebookLink(activity);
         } else if (id == R.id.nav_youtube) {
@@ -232,7 +254,6 @@ public class Quest extends BaseActivity
             Apputilities.rateThisApp(activity);
         } else if (id == R.id.nav_about) {
             ActivityUtilities.getInstance().invokeNewActivity(activity, AboutDevActivity.class, false);
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

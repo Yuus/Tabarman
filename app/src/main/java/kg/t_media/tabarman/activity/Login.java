@@ -2,10 +2,12 @@ package kg.t_media.tabarman.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import kg.t_media.tabarman.R;
+import kg.t_media.tabarman.models.CategoryModel;
 import kg.t_media.tabarman.utilites.ActivityUtilities;
 import kg.t_media.tabarman.utilites.LoginData;
 import kg.t_media.tabarman.utilites.LoginResult;
 import kg.t_media.tabarman.utilites.PlayerSettingsResult;
+import kg.t_media.tabarman.utilites.QuestResult;
 import kg.t_media.tabarman.utilites.TabarmanApi;
 import kg.t_media.tabarman.utilites.TabarmanClient;
 import retrofit2.Call;
@@ -19,8 +21,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
 
 public class Login extends AppCompatActivity implements View.OnClickListener{
 
@@ -35,6 +40,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
     final String LANGID = "LANGID";
     final String COUNTRYID = "COUNTRYID";
     final String EMAIL = "EMAIL";
+    final String NAME = "NAME";
+    final String PWD = "PWD";
 
     String playerId;
     String sessionId;
@@ -43,6 +50,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
     String langId;
     String countryId;
     String email;
+    String name;
+    String pwd;
 
     Button btnLogin;
     TextView lnkReg;
@@ -63,85 +72,96 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
 
         lnkReg = (TextView) findViewById(R.id.lnkReg);
         lnkReg.setOnClickListener(this);
+
+        getNamePwd();
+        if( name != null && pwd != null) {
+            login();
+        }
+
     }
 
     @Override
     public void onClick(View v) {
-        String name = txtName.getText().toString();
-        String pwd = txtPwd.getText().toString();
+        name = txtName.getText().toString();
+        pwd = txtPwd.getText().toString();
         switch (v.getId()) {
             case R.id.btnLogin:
-
-                LoginData logdata = new LoginData();
-                logdata.setLogin(name);
-                logdata.setPassword(pwd);
-
-                TabarmanApi api = TabarmanClient.getTabarmanApi();
-                final Call<LoginResult> logResult = api.Authorization(logdata);
-                logResult.enqueue(new Callback<LoginResult>() {
-                    @Override
-                    public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
-                        if (response.isSuccessful()) {
-
-                            Integer status = response.body().getStatus();
-                            String message = response.body().getMessage();
-                            playerId = response.body().getPlayerId();
-                            sessionId = response.body().getSessionId();
-                            if (status == 0) {
-                                Snackbar.make(layout, "Ошибка:" + message, Snackbar.LENGTH_LONG).show();
-                            } else if (status == 3) {
-                                Snackbar.make(layout, "" + message, Snackbar.LENGTH_LONG).show();
-                            } else  {
-                                Snackbar.make(layout, "Авторизован:" + playerId, Snackbar.LENGTH_LONG).show();
-                                saveSessionId();
-                                savePlayerId();
-                                TabarmanApi api2 = TabarmanClient.getTabarmanApi();
-                                Call <PlayerSettingsResult> playerSettingsResult = api2.playerSettings(playerId, sessionId);
-                                playerSettingsResult.enqueue(new Callback<PlayerSettingsResult>() {
-                                    @Override
-                                    public void onResponse(Call<PlayerSettingsResult> call, Response<PlayerSettingsResult> response2) {
-                                        if (response2.isSuccessful()) {
-                                            Integer status2 = response2.body().getStatus();
-                                            String message2 = response2.body().getMessage();
-                                            PlayerSettingsResult.Data playerSettingsData = response2.body().getData();
-
-                                            userName = playerSettingsData.getUsername();
-                                            surName = playerSettingsData.getSurname();
-                                            langId = playerSettingsData.getLanguageId();
-                                            countryId = playerSettingsData.getCountryId();
-                                            email = playerSettingsData.getEmail();
-                                            saveUserSettings();
-
-                                            ActivityUtilities.getInstance().invokeNewActivity(Login.this, Quest.class, true );
-
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<PlayerSettingsResult> call, Throwable t) {
-
-                                    }
-                                });
-
-
-                            }
-                        } else {
-
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<LoginResult> call, Throwable t) {
-
-                    }
-                });
-
+                login();
+                break;
             case R.id.lnkReg:
-
                 ActivityUtilities.getInstance().invokeNewActivity(Login.this, Registration.class, true );
                 break;
             default:
                 break;
         }
+    }
+
+    void login() {
+        LoginData logdata = new LoginData();
+        logdata.setLogin(name);
+        logdata.setPassword(pwd);
+
+        TabarmanApi api = TabarmanClient.getTabarmanApi();
+        final Call<LoginResult> logResult = api.Authorization(logdata);
+        logResult.enqueue(new Callback<LoginResult>() {
+            @Override
+            public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
+                if (response.isSuccessful()) {
+
+                    Integer status = response.body().getStatus();
+                    String message = response.body().getMessage();
+                    playerId = response.body().getPlayerId();
+                    sessionId = response.body().getSessionId();
+                    if (status == 0) {
+                        Snackbar.make(layout, "Ошибка:" + message, Snackbar.LENGTH_LONG).show();
+                    } else if (status == 2) {
+                        Snackbar.make(layout, "Ошибка авторизации:" + message, Snackbar.LENGTH_LONG).show();
+                    } else if (status == 3) {
+                        Snackbar.make(layout, "" + message, Snackbar.LENGTH_LONG).show();
+                    } else if (playerId != null)  {
+                        Snackbar.make(layout, "Авторизован:" + playerId, Snackbar.LENGTH_LONG).show();
+                        saveSessionId();
+                        savePlayerId();
+                        savePlayerNamePwd();
+                        playerSettings();
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<LoginResult> call, Throwable t) {
+
+            }
+        });
+    }
+
+    void playerSettings() {
+        TabarmanApi api2 = TabarmanClient.getTabarmanApi();
+        final Call <PlayerSettingsResult> playerSettingsResult = api2.playerSettings(playerId, sessionId);
+        playerSettingsResult.enqueue(new Callback<PlayerSettingsResult>() {
+            @Override
+            public void onResponse(Call<PlayerSettingsResult> call, Response<PlayerSettingsResult> response2) {
+                if (response2.isSuccessful()) {
+                    Integer status2 = response2.body().getStatus();
+                    String message2 = response2.body().getMessage();
+                    PlayerSettingsResult.Data playerSettingsData = response2.body().getData();
+
+                    userName = playerSettingsData.getUsername();
+                    surName = playerSettingsData.getSurname();
+                    langId = playerSettingsData.getLanguageId();
+                    countryId = playerSettingsData.getCountryId();
+                    email = playerSettingsData.getEmail();
+                    saveUserSettings();
+
+                    ActivityUtilities.getInstance().invokeNewActivity(Login.this, Quest.class, true );
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlayerSettingsResult> call, Throwable t) {
+
+            }
+        });
     }
 
     void saveSessionId() {
@@ -158,6 +178,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
         ed.commit();
     }
 
+    void savePlayerNamePwd() {
+        sPref = getSharedPreferences(USERSETTINGS, MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putString(NAME, name);
+        ed.putString(PWD, pwd);
+        ed.commit();
+    }
+
     void saveUserSettings() {
         sPref = getSharedPreferences(USERSETTINGS, MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
@@ -167,6 +195,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
         ed.putString(COUNTRYID, countryId);
         ed.putString(EMAIL, email);
         ed.commit();
+    }
+
+    void getNamePwd() {
+        sPref = getSharedPreferences(USERSETTINGS, MODE_PRIVATE);
+        name = sPref.getString(NAME, null);
+        pwd = sPref.getString(PWD, null);
+
     }
 
 }

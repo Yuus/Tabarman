@@ -144,11 +144,16 @@ public class SplashActivity extends AppCompatActivity {
         });
 
         getPrefs();
-        if (sessionId.equals("0")) {
+
+
+
+
+
+//        if (sessionId.equals("0")) {
             ActivityUtilities.getInstance().invokeNewActivity(SplashActivity.this, Login.class, true);
-        } else {
-            ActivityUtilities.getInstance().invokeNewActivity(SplashActivity.this, Quest.class, true);
-        }
+//        } else {
+//            ActivityUtilities.getInstance().invokeNewActivity(SplashActivity.this, Quest.class, true);
+//        }
     }
 
 //    class DBHelper extends SQLiteOpenHelper {

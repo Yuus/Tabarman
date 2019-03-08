@@ -26,5 +26,8 @@ public interface TabarmanApi {
     @GET("quests/questList.php")
     Call<QuestResult> questList(@Query("playerId") String playerId, @Query ("sessionId") String SessionId, @Query ("questId") Integer questId);
 
+    @GET("quests/questList.php")
+    Call<QResult> questList2(@Query("playerId") String playerId, @Query ("sessionId") String SessionId, @Query ("questId") String questId);
+
 
 }
